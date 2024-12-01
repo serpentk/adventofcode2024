@@ -11,7 +11,4 @@ for line in sys.stdin:
     loc2.append(l2)
 
 c = Counter(loc2)
-
-s = 0
-
 print(sum([x * c[x] for x in loc1]))
