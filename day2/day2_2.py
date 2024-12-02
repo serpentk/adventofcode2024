@@ -6,13 +6,8 @@ def is_perfectly_safe(report):
         all([0 < report[i - 1] - report[i] < 4 for i in range(1, len(report))]))
 
 def is_safe(report):
-    if is_perfectly_safe(report):
-        return True
-    for i in range(len(report)):
-        if is_perfectly_safe(report[:i] + report[i + 1:]):
-            return True
-    return False
-                   
+    return any([is_perfectly_safe(x)
+                for x in [report] + [report[:i] + report[i + 1:] for i in range(len(report))]])                   
 
 safe = 0
 for line in sys.stdin:
