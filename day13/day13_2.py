@@ -15,7 +15,7 @@ for line in sys.stdin:
     assert det != 0
     a = (prize_x * by - prize_y * bx) // det
     b = (-prize_x * ay + prize_y * ax) // det
-    if a * ax + b * bx == prize_x and a * ay + b * by == prize_y:
+    if a >= 0 and b >= 0 and a * ax + b * bx == prize_x and a * ay + b * by == prize_y:
         cost += a * 3 + b
     try:
         input()
