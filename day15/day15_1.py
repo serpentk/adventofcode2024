@@ -98,7 +98,7 @@ while len(row) > 0:
 for line in sys.stdin:
     for c in line.strip():
         # print_map(warehouse)
-        # print('Moving c: {}'.format(c))
+        # print('Moving {}'.format(c))
         if c == '^':
             robotx, roboty = move_up(robotx, roboty, warehouse)
         elif c == 'v':

@@ -17,16 +17,16 @@ for line in f:
     space[starty][startx] += 1
 
 
-TREE_HEIGHTH = 10
+TREE_HEIGHT = 10
 def guess_tree(space):
     for col in space:
         i = 0
-        while i < len(col) - TREE_HEIGHTH:
-            for c in range(TREE_HEIGHTH):
+        while i < len(col) - TREE_HEIGHT:
+            for c in range(TREE_HEIGHT):
                 if col[i + c] == 0:
                     i = i + c + 1
                     break
-                if c == TREE_HEIGHTH - 1:
+                if c == TREE_HEIGHT - 1:
                     return True
     return False
     
