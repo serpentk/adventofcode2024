@@ -16,7 +16,6 @@ pointer = 0
 while True:
     try:
         cmd = program[pointer]
-        print(cmd)
         if cmd == 0: # adv
             a = int(a / (2 ** combo(program[pointer + 1])))
             pointer += 2
