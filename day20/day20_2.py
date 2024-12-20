@@ -7,7 +7,7 @@ start = None
 end = None
 path = dict()
 for i, line in enumerate(sys.stdin):
-    for j, c in enumerate(line):
+    for j, c in enumerate(line.strip()):
         if c == '#':
             continue
         if c == 'S':
@@ -29,6 +29,7 @@ while cur != end:
     cur = nex
 path[end] = i
 
+print([p for p in path if path[p] is None])
 path = {point: path[point] for point in path if path[point] is not None}
 cheats = 0
 for x, y in path:
