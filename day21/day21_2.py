@@ -2,8 +2,6 @@ import sys
 import collections
 
 STEPS = 24
-STEPS = 3
-
 
 class BaseKeyboard:
     buttons = {}
@@ -16,25 +14,20 @@ class BaseKeyboard:
             dx = []
             if x < curx:
                 dx = ['^'] * (curx - x)
-            elif x > curx:
-                dx = ['V'] * (x - curx)
-            # if y < cury:
-            #     dy = '<' * (cury - y)
-            # elif y > cury:
-            #     dy = '>' * (y - cury)
-            
-            if y >= cury:
-                if (curx, y) not in self.buttons.values():
-                    print('Oooops {} cur {} target{}'.format(input_seq, (curx, cury), (x, y)))
-                    print(self.buttons)
-                    exit(1)
-                res += ['>'] * (y - cury) + dx + ['A']
             else:
-                if (x, cury) not in self.buttons.values():
-                    print('Oooops {} cur {} target {}'.format(input_seq, (curx, cury), (x, y)))
-                    print(self.buttons)
-                    exit(1)
-                res += dx + ['<'] * (cury - y) + ['A']
+                dx = ['V'] * (x - curx)
+            if y < cury:
+                 dy = ['<'] * (cury - y)
+            else:
+                 dy = ['>'] * (y - cury)
+                 
+            if y <= cury and (curx, y) in self.buttons.values():
+                res += dy + dx + ['A']
+            elif (x, cury) in self.buttons.values():
+                res += dx + dy + ['A']
+            else:
+                res += dy + dx + ['A']
+                            
             curx, cury = x, y
         return ''.join(res)
                 
@@ -82,21 +75,6 @@ class BaseKeyboard:
             for seq in self.get_sequences(input_seq[1:], input_seq[0]):
                 for v in variants:
                     yield v + seq
-    #         if 
-    #     for c in input_seq:
-    #         x, y = self.buttons[c]
-            
-    #         if x > curx:
-    #             res += ['V'] * (x - curx)
-    #         elif x < curx:
-    #             res += ['^'] * (curx - x)
-    #         if y > cury:
-    #             res += ['>'] * (y - cury)
-    #         elif y < cury:
-    #             res += ['<'] * (cury - y)
-    #         res += 'A'
-    #         curx, cury = x, y
-    #     return res
     
 
 class NumKeyboard(BaseKeyboard):
@@ -121,10 +99,8 @@ for _ in range(4):
     curseq = {x + y for x in curseq for y in '<>^V'}
     
 blocks = {x + 'A': [seq + 'A' for seq in dir_kbd.get_sequence(x + 'A').split('A')[:-1]] 
-          for x in seqs}
-blocks['VA'] = ['V>A', '']
+          for x in seqs if not(('^' in x and 'V' in x) or ('>' in x and '<' in x))}
 
-print(blocks)
 for line in sys.stdin:
     numseq = line.strip()
     if len(numseq) == 0:
@@ -132,7 +108,6 @@ for line in sys.stdin:
     num_code = int(line[:3])
     seq0 =  list(num_kbd.get_sequences(numseq, 'A'))
     for s in seq0:
-        #print(num_kbd.exec_sequence(s))
         assert num_kbd.exec_sequence(s) == numseq
     seq1 = []
     for x in seq0:
@@ -140,13 +115,7 @@ for line in sys.stdin:
         for s in sl:
             assert dir_kbd.exec_sequence(s) == x
         seq1.extend(list(dir_kbd.get_sequences(x, 'A')))
-    #seq1 = [dir_kbd.get_sequence(x) for x in seq0]
-    print('---------------')
     min_len = min(len(x) for x in seq1)
-    print(num_code, seq0)
-    #print(num_code, len([x for x in seq1 if len(x) == min_len]), len(seq1), min_len)
-    #print(seq1)
-    #print(num_code, min_len)
     seq2 = []
     min_len = None
     for x in seq1:
@@ -155,9 +124,7 @@ for line in sys.stdin:
         for step in range(STEPS):
             newcount = collections.Counter()
             for block in curcount:
-                #newcount.update(blocks[block] * curcount[block])
                 inner_counter = collections.Counter(blocks[block])
-                #rint(block, inner_counter)
                 for b, value in inner_counter.items():
                     newcount.update({b: curcount[block] * value})
             curcount = newcount
@@ -165,8 +132,5 @@ for line in sys.stdin:
         if min_len is None or min_len > cur_len:
             min_len = cur_len
     res += num_code * (min_len or 0)
-    print(num_code, min_len)
-    #print(num_code, len([x for x in seq2 if len(x) == min_len]), len(seq2), min_len)
-    #print(num_code, min_len)
 
 print(res)
